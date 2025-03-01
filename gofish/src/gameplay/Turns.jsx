@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import useInitGame from './startGame';
 
-function Turns() {
+const useTurns = () => {
 
-    const { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards } = useInitGame();
+    const { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setRemainingCards } = useInitGame();
 
     const [currentTurn, setCurrentTurn] = useState('player');
 
@@ -19,25 +19,41 @@ function Turns() {
         }
         else {
             console.log('Go Fish!');
-            goFish(playerHand);
-
+            playerGoFish();
             changeTurn();
         }
     }
 
+    const cpuTurn = (requestedCardValue) => {
+        if (cpuHand.length === 0) return;
 
+        const matchingCard = playerHand.find(card => card.value === requestedCardValue);
+        if (matchingCard) {
+            setCpuHand(prevHand => [...prevHand, matchingCard]);
+            setPlayerHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
+            changeTurn();
+        }
+        else {
+            cpuGoFish();
+            changeTurn()
+        }
+    }
 
     const playerGoFish = async () => {
+        if (remainingCards === 0) return;
+     
         const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
         setPlayerHand(prevHand => [...prevHand, data.cards[0]]);
         setRemainingCards(data.remaining);
     }
     const cpuGoFish = async () => {
+        if (remainingCards === 0) return;
+
         const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
         setCpuHand(prevHand => [...prevHand, data.cards[0]]);
         setRemainingCards(data.remaining);
     }
 }
-    export default Turns;
+export default useTurns;
