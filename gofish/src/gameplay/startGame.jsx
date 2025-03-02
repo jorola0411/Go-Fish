@@ -13,11 +13,11 @@ const useInitGame = () => {
     useEffect(() => {
         const startGame = async () => {
             try {
-                const deckResponse = await fetch(`https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1`) // new deck
+                const deckResponse = await fetch(`/api/api/deck/new/shuffle/?deck_count=1`) // new deck
                 const deckData = await deckResponse.json();
                 setDeckId(deckData.deck_id);
 
-                const dataResponse = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckData.deck_id}/draw/?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
+                const dataResponse = await fetch(`/api/api/deck/${deckData.deck_id}/draw/?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
                 const drawData = await dataResponse.json();
 
                 setPlayerHand(drawData.cards.slice(0, 7));

@@ -1,48 +1,49 @@
-import { useState,  } from 'react';
-import useInitGame from './startGame';
+import { useState, useEffect } from 'react';
 
-const useTurns = () => {
-
-    const { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setRemainingCards } = useInitGame();
+const useTurns = ({playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, remainingCards, setRemainingCards }) => {
 
     const [currentTurn, setCurrentTurn] = useState('player');
 
     const changeTurn = () => {
         setCurrentTurn(prevTurn => prevTurn === 'player' ? 'cpu' : 'player');
     }
-    
+
     const playerTurn = (requestedCardValue) => {
+        if (currentTurn !== 'player') return;
+
         const matchingCard = cpuHand.find(card => card.value === requestedCardValue);
-        if (matchingCard) {
-            setPlayerHand(prevHand => [...prevHand, matchingCard]);
+        if (matchingCard.length > 0) {
+            setPlayerHand(prevHand => [...prevHand, ...matchingCard]);
             setCpuHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
-            changeTurn();
-        }
-        else {
+        } else {
             console.log('Go Fish!');
             playerGoFish();
-            changeTurn();
         }
-    }
+        changeTurn();
+    };
 
-    const cpuTurn = (requestedCardValue) => {
+    const cpuTurn = async () => {
+        if (currentTurn !== 'cpu') return;
         if (cpuHand.length === 0) return;
 
+        const randomCard = cpuHand[Math.floor(Math.random() * cpuHand.length)];
+        const requestedCardValue = randomCard.value;
+        console.log(`CPU asks for: ${requestedCardValue}`);
+
         const matchingCard = playerHand.find(card => card.value === requestedCardValue);
-        if (matchingCard) {
-            setCpuHand(prevHand => [...prevHand, matchingCard]);
+        if (matchingCard.length > 0) {
+            setCpuHand(prevHand => [...prevHand, ...matchingCard]);
             setPlayerHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
-            changeTurn();
-        }
-        else {
+        } else {
+            console.log('CPU: Go Fish!');
             cpuGoFish();
-            changeTurn()
         }
+        setTimeout(changeTurn, 2000);
     }
 
     const playerGoFish = async () => {
         if (remainingCards === 0) return;
-     
+
         const response = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
         setPlayerHand(prevHand => [...prevHand, data.cards[0]]);
@@ -55,8 +56,14 @@ const useTurns = () => {
         const data = await response.json();
         setCpuHand(prevHand => [...prevHand, data.cards[0]]);
         setRemainingCards(data.remaining);
-    }
+    };
 
-    return { playerHand, cpuHand, currentTurn, playerTurn, cpuTurn };
-}
+    useEffect(() => {
+        if (currentTurn === 'cpu') {
+            cpuTurn();
+        }
+    },[currentTurn]);
+
+    return { currentTurn, playerTurn, cpuTurn };
+};
 export default useTurns;
