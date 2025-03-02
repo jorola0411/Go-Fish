@@ -1,11 +1,21 @@
 //this holds the entire game
 //PLACEHOLDER
-function GameContainer() {
-    return(
-    <div>
+import useInitGame from "../gameplay/startGame";
+import Hand from './Hand'; 
 
-        <p className="font-bold text-6xl">hi</p>
-    </div>
-    )
+function GameContainer() {
+    const { playerHand, cpuHand } = useInitGame(); 
+
+    return (
+        <div className="p-4">
+            <h1 className="text-2xl font-bold text-center">Go Fish!</h1>
+            
+            {/* Hands */}
+            <Hand title="CPU Hand" hand={cpuHand} isCpu={true} />
+            <Hand title="Your Hand" hand={playerHand} isCpu={false} />
+            
+        </div>
+    );
 }
+
 export default GameContainer;

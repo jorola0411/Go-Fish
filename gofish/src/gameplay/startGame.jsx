@@ -8,26 +8,32 @@ const useInitGame = () => {
     const [cpuHand, setCpuHand] = useState([]);
     const [deckId, setDeckId] = useState('');
     const [remainingCards, setRemainingCards] = useState(52);
+    const [gameStart, setGameStart] = useState(false);
 
     useEffect(() => {
         const startGame = async () => {
             try {
-                const response = await fetch(`https://deckofcardsapi.com/api/deck/new/draw/?count=14`)
-                const data = await response.json();
+                const deckResponse = await fetch(`https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1`) // new deck
+                const deckData = await deckResponse.json();
+                setDeckId(deckData.deck_id);
 
-                setDeckId(data.deck_id);
-                setPlayerHand(data.cards.slice(0, 7));
-                setCpuHand(data.cards.slice(7, 14));
-                setRemainingCards(data.remaining);
+                const dataResponse = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckData.deck_id}/draw/?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
+                const drawData = await dataResponse.json();
+
+                setPlayerHand(drawData.cards.slice(0, 7));
+                setCpuHand(drawData.cards.slice(7, 14));
+                setRemainingCards(drawData.remaining);
+                setGameStart(true);
+
             } catch (error) {
-                console.error("Error setting up game:", error);
+                setError(error);
             }
         };
 
         startGame();
     }, []);
 
-    return { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards };
+    return { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards, gameStart };
 
 };
 
