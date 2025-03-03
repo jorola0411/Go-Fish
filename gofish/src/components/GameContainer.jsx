@@ -1,4 +1,3 @@
-import { useState } from "react";
 import useInitGame from "../gameplay/startGame";
 import useTurns from "../gameplay/Turns";
 import Hand from "./Hand";
@@ -7,7 +6,7 @@ function GameContainer() {
     const { playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, remainingCards, setRemainingCards, gameStart, startGame } = useInitGame();
 
     // Pass game state to useTurns
-    const { currentTurn, playerTurn, cpuTurn } = useTurns({ 
+    const { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver, winner } = useTurns({ 
         playerHand, 
         setPlayerHand, 
         cpuHand, 
@@ -20,7 +19,10 @@ function GameContainer() {
     return (
         <div className="p-4 text-center">
             <h1 className="text-2xl font-bold">Go Fish!</h1>
-
+            <div className="flex justify-between">
+                <p className="text-lg">Your Score: {playerScore}</p>
+                <p className="text-lg">CPU Score: {cpuScore}</p>
+            </div>
             {!gameStart ? (
                 <button 
                     onClick={startGame} 
@@ -28,7 +30,12 @@ function GameContainer() {
                 >
                     Start Game
                 </button>
-            ) : (
+            ) :gameOver ? (
+                <div className="mt-4 text-xl font-semibold">
+                    <p>Game Over!</p>
+                    <p>{winner === "Tie" ? "It's a tie!" : `${winner} wins!`}</p>
+                </div>
+             ) : (
                 <>
                     <Hand title="Your Hand" hand={playerHand} isCpu={false} onCardClick={playerTurn} />
                     <Hand title="CPU Hand" hand={cpuHand} isCpu={true} />
