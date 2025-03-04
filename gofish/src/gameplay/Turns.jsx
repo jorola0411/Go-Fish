@@ -6,6 +6,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const [cpuScore, setCpuScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const [winner, setWinner] = useState(null);
+    const [lastRequestedCard, setLastRequestedCard] = useState(null);
 
     const cardOrder = { "ACE": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "JACK": 11, "QUEEN": 12, "KING": 13 };
 
@@ -28,26 +29,27 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
 
         Object.keys(cardCounts).forEach(value => {
             if (cardCounts[value] === 4) {
-                updatedHand = updatedHand.filter(card => card.value !== value); 
-                scoreIncrease += 1; 
+                updatedHand = updatedHand.filter(card => card.value !== value);
+                scoreIncrease += 1;
             }
         });
 
         if (scoreIncrease > 0) {
-            setHand(updatedHand); 
-            setScore(prevScore => prevScore + scoreIncrease); 
+            setHand(updatedHand);
+            setScore(prevScore => prevScore + scoreIncrease);
         }
     };
 
-   
     const changeTurn = () => {
         setCurrentTurn(prevTurn => (prevTurn === 'player' ? 'cpu' : 'player'));
     };
 
     const playerTurn = (requestedCardValue) => {
         if (currentTurn !== 'player' || gameOver) return;
+        setLastRequestedCard(requestedCardValue);
 
         const matchingCards = cpuHand.filter(card => card.value === requestedCardValue);
+
         if (matchingCards.length > 0) {
             setPlayerHand(prevHand => {
                 const newHand = sortHand([...prevHand, ...matchingCards]);
@@ -56,6 +58,8 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             });
 
             setCpuHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
+            console.log(`Player matched with${requestedCardValue}`)
+            return;
         } else {
             console.log('Go Fish!');
             playerGoFish();
@@ -72,34 +76,44 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         console.log(`CPU asks for: ${requestedCardValue}`);
 
         const matchingCards = playerHand.filter(card => card.value === requestedCardValue);
+
         if (matchingCards.length > 0) {
             setCpuHand(prevHand => {
                 const newHand = [...prevHand, ...matchingCards];
-                completedSet(newHand, setCpuHand, setCpuScore); 
+                completedSet(newHand, setCpuHand, setCpuScore);
                 return newHand;
             });
 
             setPlayerHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
+            setTimeout(changeTurn, 3000);
         } else {
             console.log('CPU: Go Fish!');
-            cpuGoFish();
+            await cpuGoFish();
         }
-
-        setTimeout(changeTurn, 1000);
     };
 
     const playerGoFish = async () => {
-        if (remainingCards === 0) return;
+        if (remainingCards === 0) {
+            changeTurn();
+            return;
+        }
 
         const response = await fetch(`/api/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
+        const drawnCard = data.cards[0];
+
         setPlayerHand(prevHand => {
             const newHand = sortHand([...prevHand, data.cards[0]]);
-            completedSet(newHand, setPlayerHand, setPlayerScore); 
+            completedSet(newHand, setPlayerHand, setPlayerScore);
             return newHand;
         });
 
         setRemainingCards(data.remaining);
+        if (drawnCard.value === lastRequestedCard) {
+            console.log("You drew the card you asked for! Go again.");
+        } else {
+            changeTurn();
+        }
     };
 
     const cpuGoFish = async () => {
@@ -107,13 +121,22 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
 
         const response = await fetch(`/api/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
+        const drawnCard = data.cards[0];
+
         setCpuHand(prevHand => {
-            const newHand = [...prevHand, data.cards[0]];
-            completedSet(newHand, setCpuHand, setCpuScore); 
+            const newHand = [...prevHand, drawnCard];
+            completedSet(newHand, setCpuHand, setCpuScore);
             return newHand;
         });
 
         setRemainingCards(data.remaining);
+
+        if (drawnCard.value === lastRequestedCard) {
+            console.log("CPU drew the card they asked for! Go again.");
+            setTimeout(cpuTurn, 3000);
+        } else {
+            changeTurn();
+        }
     };
 
     useEffect(() => {
@@ -121,18 +144,19 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             cpuTurn();
         }
     }, [currentTurn]);
-    
+
     const checkGameOver = () => {
-        if ((playerHand.length === 0 && remainingCards === 0) || (cpuHand.length === 0 && remainingCards === 0)) {setGameOver(true);
+        if ((playerHand.length === 0 && remainingCards === 0) || (cpuHand.length === 0 && remainingCards === 0)) {
+            setGameOver(true);
             setWinner(playerScore > cpuScore ? 'player' : cpuScore > playerScore ? "cpu" : 'Tie')
         }
     };
-        
+
     useEffect(() => {
         checkGameOver();
     }, [playerHand, cpuHand, remainingCards]);
 
-    return { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver};
+    return { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver };
 };
 
 export default useTurns;
