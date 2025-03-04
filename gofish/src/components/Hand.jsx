@@ -3,13 +3,13 @@ function Hand({ title, hand, isCpu, onCardClick }) {
     return (
         <div className="my-4">
             <h2 className="text-xl font-semibold">{title}</h2>
-            <div className="flex gap-2">
+            <div className="flex justify-center items-center gap-4">
                 {hand.map((card, index) => (
-                    <img 
-                        key={index} 
-                        src={isCpu ? "https://deckofcardsapi.com/static/img/back.png" : card.image} 
-                        alt={card.value} 
-                        className="w-16 h-auto cursor-pointer" 
+                    <img
+                        key={index}
+                        src={isCpu ? "https://deckofcardsapi.com/static/img/back.png" : card.image}
+                        alt={card.value}
+                        className={isCpu ? "w-24 h-32": "cursor-pointer w-24 h-32 transition-transform transform hover:scale-110"}
                         onClick={() => !isCpu && onCardClick(card.value)} // Only clickable if it's the player's hand
                     />
                 ))}

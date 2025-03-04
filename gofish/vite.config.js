@@ -9,8 +9,13 @@ export default defineConfig({
       '/api': {
         target: 'https://www.deckofcardsapi.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        secure: false, // Try adding this if HTTPS is causing issues
+        rewrite: (path) => {
+          console.log('Rewriting:', path);
+          return path.replace(/^\/api/, '');
+        }
       }
     }
   }
+  
 })

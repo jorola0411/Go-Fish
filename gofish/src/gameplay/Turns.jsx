@@ -156,7 +156,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         checkGameOver();
     }, [playerHand, cpuHand, remainingCards]);
 
-    return { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver };
+    return { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver, winner };
 };
 
 export default useTurns;
