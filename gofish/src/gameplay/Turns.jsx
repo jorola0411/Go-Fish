@@ -4,6 +4,8 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const [currentTurn, setCurrentTurn] = useState('player');
     const [playerScore, setPlayerScore] = useState(0);
     const [cpuScore, setCpuScore] = useState(0);
+    const [playerMessage, setPlayerMessage] = useState('');
+    const [cpuMessage, setCpuMessage] = useState('');
     const [gameOver, setGameOver] = useState(false);
     const [winner, setWinner] = useState(null);
     const [lastRequestedCard, setLastRequestedCard] = useState(null);
@@ -47,10 +49,11 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const playerTurn = (requestedCardValue) => {
         if (currentTurn !== 'player' || gameOver) return;
         setLastRequestedCard(requestedCardValue);
-
+        
         const matchingCards = cpuHand.filter(card => card.value === requestedCardValue);
 
         if (matchingCards.length > 0) {
+
             setPlayerHand(prevHand => {
                 const newHand = sortHand([...prevHand, ...matchingCards]);
                 completedSet(newHand, setPlayerHand, setPlayerScore);
@@ -58,10 +61,9 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             });
 
             setCpuHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
-            console.log(`Player matched with${requestedCardValue}`)
+            
             return;
         } else {
-            console.log('Go Fish!');
             playerGoFish();
         }
 
@@ -73,7 +75,8 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
 
         const randomCard = cpuHand[Math.floor(Math.random() * cpuHand.length)];
         const requestedCardValue = randomCard.value;
-        console.log(`CPU asks for: ${requestedCardValue}`);
+        setCpuMessage(`Do you have any ${requestedCardValue}s?`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         const matchingCards = playerHand.filter(card => card.value === requestedCardValue);
 
@@ -87,8 +90,8 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             setPlayerHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
             setTimeout(changeTurn, 3000);
         } else {
-            console.log('CPU: Go Fish!');
-            await cpuGoFish();
+            setCpuMessage('Go Fish!');
+            setTimeout(cpuGoFish, 1000);
         }
     };
 
@@ -110,9 +113,9 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
 
         setRemainingCards(data.remaining);
         if (drawnCard.value === lastRequestedCard) {
-            console.log("You drew the card you asked for! Go again.");
+            setPlayerMessage("I drew the card I wanted! I get to go again.");
         } else {
-            changeTurn();
+            setTimeout(changeTurn, 3000);
         }
     };
 
@@ -132,7 +135,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         setRemainingCards(data.remaining);
 
         if (drawnCard.value === lastRequestedCard) {
-            console.log("CPU drew the card they asked for! Go again.");
+            setCpuMessage("I drew the card I wanted! Go again hehe.");
             setTimeout(cpuTurn, 3000);
         } else {
             changeTurn();
@@ -156,7 +159,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         checkGameOver();
     }, [playerHand, cpuHand, remainingCards]);
 
-    return { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver, winner };
+    return { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver, winner, playerMessage, cpuMessage };
 };
 
 export default useTurns;

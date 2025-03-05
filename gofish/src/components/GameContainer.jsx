@@ -4,9 +4,9 @@ import Hand from "./Hand";
 
 function GameContainer() {
     const { playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, remainingCards, setRemainingCards, gameStart, startGame } = useInitGame();
-
+    
     // Pass game state to useTurns
-    const { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver, winner } = useTurns({
+    const { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver, winner, playerMessage, cpuMessage } = useTurns({
         playerHand,
         setPlayerHand,
         cpuHand,
@@ -19,10 +19,7 @@ function GameContainer() {
     return (
         <div className="p-4 text-center min-h-screen justify-center text-white text-center">
             <h1 className="text-2xl font-bold">Go Fish!</h1>
-            <div className="flex justify-between">
-                <p className="text-lg">Your Score: {playerScore}</p>
-                <p className="text-lg">CPU Score: {cpuScore}</p>
-            </div>
+           
             {!gameStart ? (
                 <button
                     onClick={startGame}
@@ -30,15 +27,22 @@ function GameContainer() {
                 >
                     Start Game
                 </button>
+                
             ) : gameOver ? (
                 <div className="mt-4 text-xl font-semibold">
                     <p>Game Over!</p>
                     <p>{winner === "Tie" ? "It's a tie!" : `${winner} wins!`}</p>
                 </div>
             ) : (
-                <>
                 
+                <>
+                 <div className="flex justify-between">
+                <p className="text-lg">Your Score: {playerScore}</p>
+                <p className="text-lg">CPU Score: {cpuScore}</p>
+            </div>
                     <Hand title="CPU Hand" hand={cpuHand} isCpu={true} />
+                    {cpuMessage && <p className="text-lg">{cpuMessage}</p>}
+                    
                     <div className="relative flex flex-col items-center w-full text-white ">
                         <p className="text-lg font-semibold">Deck</p>
                         <div className="relative w-24 h-32 flex items-center justify-center">
@@ -47,7 +51,7 @@ function GameContainer() {
                            </div>
                         <p className="mt-5 text-white font-bold text-lg text-center">Number of cards left: {remainingCards}</p>
                         <p className="text-lg">Current Turn: {currentTurn === "player" ? "Your Turn" : "CPU's Turn"}</p>
-              
+                        {playerMessage && <p className="text-lg">{playerMessage}</p>}
                     <Hand title="Your Hand" hand={playerHand} isCpu={false} onCardClick={playerTurn} />
                  
                 </>

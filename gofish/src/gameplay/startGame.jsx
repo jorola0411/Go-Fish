@@ -18,8 +18,6 @@ const sortHand = (hand) => {
         return rankA - rankB;
     });
 };
-
-
         const startGame = async () => {
             try {
                 const deckResponse = await fetch(`/api/api/deck/new/shuffle/?deck_count=1`) // new deck
@@ -38,8 +36,6 @@ const sortHand = (hand) => {
                 setError(error);
             }
         };
-
-
 
     return { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards, gameStart, startGame };
 
