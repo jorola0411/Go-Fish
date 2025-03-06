@@ -25,4 +25,4 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: "gofish/dist/"
-          server-dir: "gofish/joseorola.ca"
+          server-dir: "gofish/joseorola.ca/"
