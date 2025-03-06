@@ -49,7 +49,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const playerTurn = (requestedCardValue) => {
         if (currentTurn !== 'player' || gameOver) return;
         setLastRequestedCard(requestedCardValue);
-        
+
         const matchingCards = cpuHand.filter(card => card.value === requestedCardValue);
 
         if (matchingCards.length > 0) {
@@ -61,7 +61,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             });
 
             setCpuHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
-            
+
             return;
         } else {
             playerGoFish();
@@ -76,7 +76,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         const randomCard = cpuHand[Math.floor(Math.random() * cpuHand.length)];
         const requestedCardValue = randomCard.value;
         setCpuMessage(`Do you have any ${requestedCardValue}s?`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
         const matchingCards = playerHand.filter(card => card.value === requestedCardValue);
 
@@ -88,10 +88,10 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             });
 
             setPlayerHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
-            setTimeout(changeTurn, 3000);
+            setTimeout(changeTurn, 1500);
         } else {
             setCpuMessage('Go Fish!');
-            setTimeout(cpuGoFish, 1000);
+            setTimeout(cpuGoFish, 1500);
         }
     };
 
@@ -101,7 +101,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             return;
         }
 
-        const response = await fetch(`/api/api/deck/${deckId}/draw/?count=1`);
+        const response = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
         const drawnCard = data.cards[0];
 
@@ -115,14 +115,14 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         if (drawnCard.value === lastRequestedCard) {
             setPlayerMessage("I drew the card I wanted! I get to go again.");
         } else {
-            setTimeout(changeTurn, 3000);
+            setTimeout(changeTurn, 1500);
         }
     };
 
     const cpuGoFish = async () => {
         if (remainingCards === 0) return;
 
-        const response = await fetch(`/api/api/deck/${deckId}/draw/?count=1`);
+        const response = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
         const drawnCard = data.cards[0];
 
@@ -136,7 +136,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
 
         if (drawnCard.value === lastRequestedCard) {
             setCpuMessage("I drew the card I wanted! Go again hehe.");
-            setTimeout(cpuTurn, 3000);
+            setTimeout(cpuTurn, 1500);
         } else {
             changeTurn();
         }
