@@ -18,13 +18,14 @@ const sortHand = (hand) => {
         return rankA - rankB;
     });
 };
+const API_BASE_URL = "https://www.deckofcardsapi.com";
         const startGame = async () => {
             try {
-                const deckResponse = await fetch(`https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1`) // new deck
+                const deckResponse = await fetch(`${API_BASE_URL}/api/deck/new/shuffle/?deck_count=1`) // new deck
                 const deckData = await deckResponse.json();
                 setDeckId(deckData.deck_id);
 
-                const dataResponse = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckData.deck_id}/draw/?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
+                const dataResponse = await fetch(`${API_BASE_URL}/api/deck/${deckData.deck_id}/draw/?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
                 const drawData = await dataResponse.json();
 
                 setPlayerHand(sortHand(drawData.cards.slice(0, 7)));

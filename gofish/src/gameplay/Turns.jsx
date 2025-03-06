@@ -12,6 +12,8 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
 
     const cardOrder = { "ACE": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "JACK": 11, "QUEEN": 12, "KING": 13 };
 
+    const API_BASE_URL = "https://www.deckofcardsapi.com";
+    
     const sortHand = (hand) => {
         return [...hand].sort((a, b) => {
             const rankA = cardOrder[a.value] || 0; // Default to 0 if undefined
@@ -101,7 +103,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             return;
         }
 
-        const response = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
+        const response = await fetch(`${API_BASE_URL}/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
         const drawnCard = data.cards[0];
 
@@ -122,7 +124,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const cpuGoFish = async () => {
         if (remainingCards === 0) return;
 
-        const response = await fetch(`https://www.deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
+        const response = await fetch(`${API_BASE_URL}/api/deck/${deckId}/draw/?count=1`);
         const data = await response.json();
         const drawnCard = data.cards[0];
 
