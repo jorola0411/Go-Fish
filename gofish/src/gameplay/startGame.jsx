@@ -2,7 +2,7 @@
 // SECTION DONE
 import { useState } from 'react';
 
-const useInitGame = () => {
+const useInitGame = () => { //useInitGame instead of InitGame to signify that it is a custom hook
 
     const [playerHand, setPlayerHand] = useState([]);
     const [cpuHand, setCpuHand] = useState([]);
@@ -18,27 +18,27 @@ const sortHand = (hand) => {
         return rankA - rankB;
     });
 };
-const API_BASE_URL = "https://www.deckofcardsapi.com";
+
         const startGame = async () => {
             try {
-                const deckResponse = await fetch(`${API_BASE_URL}/api/deck/new/shuffle/?deck_count=1`) // new deck
+                const deckResponse = await fetch(`https://coffee-carnation-muscari.glitch.me/deck`) // new deck
                 const deckData = await deckResponse.json();
-                setDeckId(deckData.deck_id);
+                setDeckId(deckId);
 
-                const dataResponse = await fetch(`${API_BASE_URL}/api/deck/${deckData.deck_id}/draw/?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
+                const dataResponse = await fetch(`https://coffee-carnation-muscari.glitch.me/draw/${deckId}?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
                 const drawData = await dataResponse.json();
 
-                setPlayerHand(sortHand(drawData.cards.slice(0, 7)));
+                setPlayerHand(sortHand(drawData.cards.slice(0, 7))); // this takes the 14 cards and slices them equally for the player and CPU
                 setCpuHand(sortHand(drawData.cards.slice(7, 14)));
-                setRemainingCards(drawData.remaining);
-                setGameStart(true);
+                setRemainingCards(drawData.remaining); //after the cards are given to the player, this sets the amount of cards left in the deck; 38 cards.
+                setGameStart(true); //after the cards have been drawn, the game starts
 
             } catch (error) {
                 setError(error);
             }
         };
 
-    return { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards, gameStart, startGame };
+    return { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards, gameStart, startGame }; // this returns the state of the game to be used in the GameContainer component
 
 };
 
