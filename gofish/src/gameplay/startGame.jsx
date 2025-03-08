@@ -22,7 +22,7 @@ const sortHand = (hand) => {
         const startGame = async () => {
             try {
                 const deckResponse = await fetch(`https://coffee-carnation-muscari.glitch.me/deck`) // new deck
-                const deckData = await deckResponse.json();
+                const deckId = await deckResponse.json();
                 setDeckId(deckId);
 
                 const dataResponse = await fetch(`https://coffee-carnation-muscari.glitch.me/draw/${deckId}?count=14`) // This draws 14 cards from the deck, 7 for the player and 7 for the CPU
