@@ -9,7 +9,7 @@ function Hand({ title, hand, isCpu, onCardClick }) {
                     return (
                         <img
                             key={index}
-                            src={isCpu ? "/assets/back.svg" : `https://coffee-carnation-muscari.glitch.me${card.image}`}
+                            src={isCpu ? "/assets/back.svg" : card.image}
                             alt={card.value}
                             className={`absolute w-24 h-32 ${isCpu ? "" : "transition-transform transform hover:scale-110"}`}
                             style={{
