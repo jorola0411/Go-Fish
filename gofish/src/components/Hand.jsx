@@ -9,9 +9,9 @@ function Hand({ title, hand, isCpu, onCardClick }) {
                     return (
                         <img
                             key={index}
-                            src={isCpu ? "/assets/back.svg" : card.image}
+                            src={isCpu ? "src/assets/back.svg" : card.image}
                             alt={card.value}
-                            className={`absolute w-24 h-32 ${isCpu ? "" : "transition-transform transform hover:scale-110"}`}
+                            className={`absolute w-24 h-32 ${isCpu ? "" : "cursor-pointer transition-transform transform hover:scale-110"}`}
                             style={{
                                 transform: `translateX(${offset}px)`, // Centers the cards 
                                 zIndex: index

@@ -46,7 +46,7 @@ function GameContainer() {
 
                         <div className="relative w-24 h-32 flex items-center justify-center">
                             <div className="absolute w-24 h-32 items-left">
-                                <img src="/assets/back.svg" className="opacity-60" />
+                                <img src="src/assets/back.svg" className="opacity-60" />
                                 <p className="mt-3 text-white font-bold text-lg text-center">{remainingCards} cards remaining</p>
                             </div>
                         </div>

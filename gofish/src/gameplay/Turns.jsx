@@ -10,12 +10,12 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const [winner, setWinner] = useState(null);
     const [lastRequestedCard, setLastRequestedCard] = useState(null);
 
-    const cardOrder = { "ACE": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "JACK": 11, "QUEEN": 12, "KING": 13 };
+    const cardOrder = { "ace": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "jack": 11, "queen": 12, "king": 13 };
     
     const sortHand = (hand) => {
         return [...hand].sort((a, b) => {
-            const rankA = cardOrder[a.value] || 0; // Default to 0 if undefined
-            const rankB = cardOrder[b.value] || 0;
+            const rankA = cardOrder[String(a.name).toLowerCase()] || 0; // Default to 0 if undefined
+            const rankB = cardOrder[String(b.name).toLowerCase()] || 0;
             return rankA - rankB;
         });
     };
@@ -74,7 +74,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         if (currentTurn !== 'cpu' || cpuHand.length === 0 || gameOver) return;
 
         const randomCard = cpuHand[Math.floor(Math.random() * cpuHand.length)];
-        const requestedCardValue = randomCard.value;
+        const requestedCardValue = randomCard.name;
         setCpuMessage(`Do you have any ${requestedCardValue}s?`);
         await new Promise(resolve => setTimeout(resolve, 1500));
 
