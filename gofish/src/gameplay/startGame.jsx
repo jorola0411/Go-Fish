@@ -20,24 +20,23 @@ const sortHand = (hand) => {
     });
 };
 
-const baseURL = "https://coffee-carnation-muscari.glitch.me"; // Replace with your actual Glitch API URL
+const baseURL = "https://coffee-carnation-muscari.glitch.me"; 
 
 const startGame = async () => {
     try {
-        // Request a new shuffled deck from the Glitch API
+        
         const deckResponse = await fetch(`${baseURL}/deck`);
-        const deckId = await deckResponse.json(); // Get deck ID
+        const deckId = await deckResponse.json(); 
 
         setDeckId(deckId);
-
-        // Now draw 14 cards (7 for the player, 7 for the CPU)
-        const drawResponse = await fetch(`${baseURL}/draw/${deckId}?count=14`);
+     
+        const drawResponse = await fetch(`${baseURL}/draw/${deckId}?count=14`);// This draws 14 cards from the deck, 7 for the player and 7 for the CPU
         const drawData = await drawResponse.json();
 
-        setPlayerHand(sortHand(drawData.slice(0, 7)));
+        setPlayerHand(sortHand(drawData.slice(0, 7))); // this takes the 14 cards and slices them equally for the player and CPU 
         setCpuHand(sortHand(drawData.slice(7, 14)));
-        setRemainingCards((prevRemaining) => prevRemaining - 14);
-        setGameStart(true);
+        setRemainingCards((prevRemaining) => prevRemaining - 14); //after the cards are given to the player, this sets the amount of cards left in the deck; 38 cards.
+        setGameStart(true); //after the cards have been drawn, the game starts
     } catch (error) {
         console.error("Error starting game:", error);
         setError(error);

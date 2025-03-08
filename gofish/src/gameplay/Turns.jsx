@@ -11,7 +11,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const [lastRequestedCard, setLastRequestedCard] = useState(null);
 
     const cardOrder = { "ace": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "jack": 11, "queen": 12, "king": 13 };
-    
+    const baseURL = "https://coffee-carnation-muscari.glitch.me"
     const sortHand = (hand) => {
         return [...hand].sort((a, b) => {
             const rankA = cardOrder[String(a.name).toLowerCase()] || 0; // Default to 0 if undefined
@@ -30,8 +30,9 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         let scoreIncrease = 0;
 
         Object.keys(cardCounts).forEach(value => {
-            if (cardCounts[value] === 4) {
-                updatedHand = updatedHand.filter(card => card.value !== value);
+            const numberValue = Number(value);
+            if (cardCounts[numberValue] === 4) {
+                updatedHand = updatedHand.filter(card => card.value !== numberValue);
                 scoreIncrease += 1;
             }
         });
@@ -74,8 +75,9 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
         if (currentTurn !== 'cpu' || cpuHand.length === 0 || gameOver) return;
 
         const randomCard = cpuHand[Math.floor(Math.random() * cpuHand.length)];
-        const requestedCardValue = randomCard.name;
-        setCpuMessage(`Do you have any ${requestedCardValue}s?`);
+        const requestedCardValue = randomCard.value;
+        const requestedCardName = randomCard.name;
+        setCpuMessage(`Do you have any ${requestedCardName}s?`);
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         const matchingCards = playerHand.filter(card => card.value === requestedCardValue);
@@ -88,10 +90,11 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             });
 
             setPlayerHand(prevHand => prevHand.filter(card => card.value !== requestedCardValue));
-            setTimeout(changeTurn, 1500);
+            setTimeout(cpuTurn, 1500);
         } else {
             setCpuMessage('Go Fish!');
             setTimeout(cpuGoFish, 1500);
+            changeTurn();
         }
     };
 
@@ -101,45 +104,39 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             return;
         }
 
-        const response = await fetch(`https://coffee-carnation-muscari.glitch.me/draw/${deckId}?count=1`);
+        try{
+
+        const response = await fetch(`${baseURL}/draw/${deckId}?count=1`);
         const data = await response.json();
-        const drawnCard = data.cards[0];
 
         setPlayerHand(prevHand => {
-            const newHand = sortHand([...prevHand, data.cards[0]]);
+            const newHand = sortHand([...prevHand, data]);
             completedSet(newHand, setPlayerHand, setPlayerScore);
             return newHand;
         });
 
-        setRemainingCards(data.remaining);
-        if (drawnCard.value === lastRequestedCard) {
-            setPlayerMessage("I drew the card I wanted! I get to go again.");
-        } else {
-            setTimeout(changeTurn, 1500);
-        }
+        setRemainingCards(prev => (data.remaining !== undefined ? data.remaining : prev - 1));
+        
+    } catch (error) {
+        console.error("Error fetching card:", error);
+    }
     };
 
     const cpuGoFish = async () => {
         if (remainingCards === 0) return;
 
-        const response = await fetch(`https://coffee-carnation-muscari.glitch.me/draw/${deckId}?count=1`);
+        const response = await fetch(`${baseURL}/draw/${deckId}?count=1`);
         const data = await response.json();
-        const drawnCard = data.cards[0];
+     
 
         setCpuHand(prevHand => {
-            const newHand = [...prevHand, drawnCard];
+            const newHand = [...prevHand, data];
             completedSet(newHand, setCpuHand, setCpuScore);
             return newHand;
         });
 
-        setRemainingCards(data.remaining);
+        setRemainingCards(prev => (data.remaining !== undefined ? data.remaining : prev - 1));
 
-        if (drawnCard.value === lastRequestedCard) {
-            setCpuMessage("I drew the card I wanted! Go again hehe.");
-            setTimeout(cpuTurn, 1500);
-        } else {
-            changeTurn();
-        }
     };
 
     useEffect(() => {
