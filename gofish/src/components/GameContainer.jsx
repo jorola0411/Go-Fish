@@ -1,7 +1,7 @@
 import useInitGame from "../gameplay/startGame";
 import useTurns from "../gameplay/Turns";
 import Hand from "./Hand";
-
+import back from "/src/assets/back.svg"
 function GameContainer() {
     const { playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, remainingCards, setRemainingCards, gameStart, startGame } = useInitGame();
 
@@ -46,7 +46,7 @@ function GameContainer() {
                         <div className="relative flex items-center justify-center">
                             <div className="w-24 h-32  relative left-[-50%]">
                                 <div className="absolute w-24 h-32">
-                                    <img src="src/assets/back.svg" className="opacity-60 w-24 h-32" />
+                                    <img src={back} className="opacity-60 w-24 h-32" />
                                     <p className="mt-3 sm:text-md font-bold lg:text-lg text-center">{remainingCards} cards remaining</p>
                                 </div>
                             </div>
