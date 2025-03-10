@@ -8,7 +8,6 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
     const [cpuMessage, setCpuMessage] = useState('');
     const [gameOver, setGameOver] = useState(false);
     const [winner, setWinner] = useState(null);
-    const [lastRequestedCard, setLastRequestedCard] = useState(null);
 
     const cardOrder = { "ace": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "jack": 11, "queen": 12, "king": 13 };
     const baseURL = "https://coffee-carnation-muscari.glitch.me"
@@ -49,7 +48,7 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
 
     const playerTurn = (requestedCardValue) => {
         if (currentTurn !== 'player' || gameOver) return;
-        setLastRequestedCard(requestedCardValue);
+   
 
         const matchingCards = cpuHand.filter(card => card.value === requestedCardValue);
 

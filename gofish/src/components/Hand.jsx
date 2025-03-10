@@ -1,4 +1,5 @@
 //this displays the hands of the player and CPU, 
+import back from "/src/assets/back.svg"
 function Hand({ title, hand, isCpu, onCardClick }) {
     return (
         <>
@@ -9,7 +10,7 @@ function Hand({ title, hand, isCpu, onCardClick }) {
                     return (
                         <img
                             key={index}
-                            src={isCpu ? "src/assets/back.svg" : card.image}
+                            src={isCpu ? back : card.image}
                             alt={card.value}
                             className={`absolute w-24 h-32 ${isCpu ? "" : "cursor-pointer transition-transform transform hover:scale-110"}`}
                             style={{
