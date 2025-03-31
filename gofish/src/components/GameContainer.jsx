@@ -3,7 +3,7 @@ import useTurns from "../gameplay/Turns";
 import Hand from "./Hand";
 import back from "/src/assets/back.svg"
 function GameContainer() {
-    const { playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, remainingCards, setRemainingCards, gameStart, startGame } = useInitGame();
+    const { playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, remainingCards, setRemainingCards, gameStart, startGame, loading } = useInitGame();
 
     // Pass game state to useTurns
     const { currentTurn, playerTurn, cpuTurn, playerScore, cpuScore, gameOver, winner, playerMessage, cpuMessage } = useTurns({
@@ -15,7 +15,9 @@ function GameContainer() {
         remainingCards,
         setRemainingCards
     });
-
+    const resetGame = () => {
+        startGame(); 
+    };
     return (
         <div className="flex flex-col items-center p-4 text-center min-h-screen justify-center text-white gap-y-10">
 
@@ -29,11 +31,23 @@ function GameContainer() {
                     >
                         Start Game
                     </button>
+                    {loading && (
+                        <div className="flex flex-col items-center mt-4">
+                            <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <p className="mt-2 text-lg">Please wait until the API wakes up...</p>
+                        </div>
+                    )}
                 </>
             ) : gameOver ? (
                 <div className="mt-4 text-center text-2xl font-semibold">
                     <p>Game Over!</p>
                     <p>{winner === "Tie" ? "It's a tie!" : `${winner} wins!`}</p>
+                    <button 
+            onClick={resetGame} 
+            className="mt-4 px-4 py-2 text-4xl bg-red-500 rounded hover:bg-red-700"
+        >
+            Play Again
+        </button>
                 </div>
             ) : (
 

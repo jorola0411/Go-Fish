@@ -92,7 +92,11 @@ const useTurns = ({ playerHand, setPlayerHand, cpuHand, setCpuHand, deckId, rema
             setTimeout(cpuTurn, 1500);
         } else {
             setCpuMessage('Go Fish!');
-            setTimeout(cpuGoFish, 1500);
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            await cpuGoFish();
+            setCpuMessage('Your turn!');
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Keep "Your turn!" for a moment
+            setCpuMessage('');
             changeTurn();
         }
     };

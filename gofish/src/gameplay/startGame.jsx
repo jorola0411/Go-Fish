@@ -9,6 +9,7 @@ const useInitGame = () => { //useInitGame instead of InitGame to signify that it
     const [deckId, setDeckId] = useState('');
     const [remainingCards, setRemainingCards] = useState(52);
     const [gameStart, setGameStart] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const cardOrder = { "ace": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "jack": 11, "queen": 12, "king": 13 };
 
@@ -23,6 +24,7 @@ const sortHand = (hand) => {
 const baseURL = "https://coffee-carnation-muscari.glitch.me"; 
 
 const startGame = async () => {
+    setLoading(true);
     try {
         
         const deckResponse = await fetch(`${baseURL}/deck`);
@@ -40,10 +42,12 @@ const startGame = async () => {
     } catch (error) {
         console.error("Error starting game:", error);
         setError(error);
+    } finally {
+        setLoading(false);
     }
 };
 
-    return { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards, gameStart, startGame }; // this returns the state of the game to be used in the GameContainer component
+    return { playerHand, cpuHand, deckId, remainingCards, setPlayerHand, setCpuHand, setDeckId, setRemainingCards, gameStart, startGame, loading }; // this returns the state of the game to be used in the GameContainer component
 
 };
 
