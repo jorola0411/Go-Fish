@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import back from "/src/assets/back.svg"
 
 function Hand({ title, hand, isCpu, onCardClick, newCards = [] }) {
   // Animation variants for cards
@@ -47,7 +48,7 @@ function Hand({ title, hand, isCpu, onCardClick, newCards = [] }) {
           return (
             <motion.img
               key={`${card.code}-${index}`}
-              src={isCpu ? "/src/assets/back.svg" : card.image}
+              src={isCpu ?  back : card.image}
               alt={isCpu ? "Card back" : card.value}
               className={`absolute w-24 h-32 ${isCpu ? "" : "cursor-pointer hover:scale-110"}`}
               style={{ zIndex: index }}
