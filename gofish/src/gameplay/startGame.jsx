@@ -21,7 +21,7 @@ const sortHand = (hand) => {
     });
 };
 
-const baseURL = "https://coffee-carnation-muscari.glitch.me"; 
+const baseURL = "https://deckofcardsapi.glitch.me"; 
 
 const startGame = async () => {
     setLoading(true);

@@ -24,7 +24,7 @@ const useTurns = ({  //these take the params from the GameContainer component
     const [lastCompletedSet, setLastCompletedSet] = useState([]);
 
     const cardOrder = { "ace": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "jack": 11, "queen": 12, "king": 13 };
-    const baseURL = "https://coffee-carnation-muscari.glitch.me"
+    const baseURL = "https://deckofcardsapi.glitch.me"
     
     const sortHand = (hand) => {
         return [...hand].sort((a, b) => {
